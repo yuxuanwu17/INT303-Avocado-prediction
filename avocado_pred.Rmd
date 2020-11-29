@@ -1,5 +1,5 @@
 ### Import the libraries
-```{r}
+```{r，include=False}
 library(tidyr)
 library(skimr)
 library(GGally)
@@ -28,14 +28,41 @@ library(lubridate)
 library(tibbletime)
 library(reshape2)
 ```
-### Load the data
+### Load the data and return the head of data
 ```{r}
-avocado_2020 <- read.csv("/Users/yuxuan/Desktop/INT301-Avocado-prediction/avocado-updated-2020.csv")
+df <- read.csv("/Users/yuxuan/Desktop/INT301-Avocado-prediction/avocado-updated-2020.csv")
+head(df)
 ```
+### Explore the data and some clarification
 
+#### Explain the features
+- date \- The date of the observation
+- average_price \- The average price of a single
+- total_volume \- Total number of avocados sold
+- year \- The year
+- type \- conventional or organic
+- geography \- The city or region of the observation
 
+#### X4046, X4225, X4770 stands for the PLU code
+
+- Small/Medium Hass Avocado (~3-5oz avocado) | #4046 <br>
+- Large Hass Avocado (~8-10oz avocado) | #4225 <br>
+- Extra Large Hass Avocado (~10-15oz avocado) | #4770 <br>
+
+### Exploratory Data Analysis
+
+#### Density plot of the difference between two avocadoes.
 ```{r}
-head(avocado_2020)
-colnames(avocado_2020)
+levels(df$type)
+```
+```{r}
+options(repr.plot.width = 8, repr.plot.height = 4)
+ggplot(df, aes(x=average_price, fill=type))+
+  geom_density()+
+  facet_wrap(~type)+
+  theme_minimal()+
+  theme(plot.title = element_text(hjust = 0.5),legend.position = "bottom")+
+  labs(title = "Avocado Price by type")+
+  scale_fill_brewer(palette = "Set2")
 ```
 

@@ -378,11 +378,75 @@ summary {
 </div>
 
 
-<div id="load-the-data" class="section level3">
-<h3>Load the data</h3>
-<pre class="r"><code>avocado_2020 &lt;- read.csv(&quot;/Users/yuxuan/Desktop/INT301-Avocado-prediction/avocado-updated-2020.csv&quot;)</code></pre>
-<pre class="r"><code># head(avocado_2020)
-colnames(avocado_2020)</code></pre>
+<div id="import-the-libraries" class="section level3">
+<h3>Import the libraries</h3>
+<pre class="{r，include=false}"><code>library(tidyr)
+library(skimr)
+library(GGally)
+library(viridis)
+library(caret)
+library(e1071)
+library(rpart)
+library(xgboost)
+library(corrplot)
+library(corrgram)
+library(ggplot2)
+library(ggthemes)
+library(psych)
+library(scales)
+library(treemap)
+library(repr)
+library(cowplot)
+library(magrittr)
+library(ggpubr)
+library(RColorBrewer)
+library(plotrix)
+library(ggrepel)
+library(tidyverse)
+library(gridExtra)
+library(lubridate)
+library(tibbletime)
+library(reshape2)</code></pre>
+</div>
+<div id="load-the-data-and-return-the-head-of-data" class="section level3">
+<h3>Load the data and return the head of data</h3>
+<pre class="r"><code>avocado_2020 &lt;- read.csv(&quot;/Users/yuxuan/Desktop/INT301-Avocado-prediction/avocado-updated-2020.csv&quot;)
+head(avocado_2020)</code></pre>
+<pre><code>##         date average_price total_volume     X4046     X4225    X4770 total_bags
+## 1 2015-01-04          1.22     40873.28   2819.50  28287.42    49.90    9716.46
+## 2 2015-01-04          1.79      1373.95     57.42    153.88     0.00    1162.65
+## 3 2015-01-04          1.00    435021.49 364302.39  23821.16    82.15   46815.79
+## 4 2015-01-04          1.76      3846.69   1500.15    938.35     0.00    1408.19
+## 5 2015-01-04          1.08    788025.06  53987.31 552906.04 39995.03  141136.68
+## 6 2015-01-04          1.29     19137.28   8040.64   6557.47   657.48    3881.69
+##   small_bags large_bags xlarge_bags         type year            geography
+## 1    9186.93     529.53           0 conventional 2015               Albany
+## 2    1162.65       0.00           0      organic 2015               Albany
+## 3   16707.15   30108.64           0 conventional 2015              Atlanta
+## 4    1071.35     336.84           0      organic 2015              Atlanta
+## 5  137146.07    3990.61           0 conventional 2015 Baltimore/Washington
+## 6    3881.69       0.00           0      organic 2015 Baltimore/Washington</code></pre>
+</div>
+<div id="explore-the-data-and-some-clarification" class="section level3">
+<h3>Explore the data and some clarification</h3>
+<div id="explain-the-features" class="section level4">
+<h4>Explain the features</h4>
+<ul>
+<li>Date - The date of the observation</li>
+</ul>
+</div>
+<div id="x4046-x4225-x4770-stands-for-the-plu-code" class="section level4">
+<h4>X4046, X4225, X4770 stands for the PLU code</h4>
+<ul>
+<li>Small/Medium Hass Avocado (~3-5oz avocado) | #4046 <br></li>
+<li>Large Hass Avocado (~8-10oz avocado) | #4225 <br></li>
+<li>Extra Large Hass Avocado (~10-15oz avocado) | #4770 <br></li>
+</ul>
+</div>
+</div>
+<div id="section" class="section level3">
+<h3></h3>
+<pre class="r"><code>colnames(avocado_2020)</code></pre>
 <pre><code>##  [1] &quot;date&quot;          &quot;average_price&quot; &quot;total_volume&quot;  &quot;X4046&quot;        
 ##  [5] &quot;X4225&quot;         &quot;X4770&quot;         &quot;total_bags&quot;    &quot;small_bags&quot;   
 ##  [9] &quot;large_bags&quot;    &quot;xlarge_bags&quot;   &quot;type&quot;          &quot;year&quot;         
