@@ -1,0 +1,41 @@
+### Import the libraries
+```{r}
+library(tidyr)
+library(skimr)
+library(GGally)
+library(viridis)
+library(caret)
+library(e1071)
+library(rpart)
+library(xgboost)
+library(corrplot)
+library(corrgram)
+library(ggplot2)
+library(ggthemes)
+library(psych)
+library(scales)
+library(treemap)
+library(repr)
+library(cowplot)
+library(magrittr)
+library(ggpubr)
+library(RColorBrewer)
+library(plotrix)
+library(ggrepel)
+library(tidyverse)
+library(gridExtra)
+library(lubridate)
+library(tibbletime)
+library(reshape2)
+```
+### Load the data
+```{r}
+avocado_2020 <- read.csv("/Users/yuxuan/Desktop/INT301-Avocado-prediction/avocado-updated-2020.csv")
+```
+
+
+```{r}
+head(avocado_2020)
+colnames(avocado_2020)
+```
+
