@@ -1,3 +1,14 @@
+---
+title: "INT303 Final project"
+author: "Yuxuan Wu 1716309"
+date: "December 1, 2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
 ### Import the libraries
 ```{r，include=False}
 library(tidyr)
@@ -56,6 +67,7 @@ head(df)
 levels(df$type)
 ```
 ```{r}
+library(ggplot2)
 options(repr.plot.width = 8, repr.plot.height = 4)
 ggplot(df, aes(x=average_price, fill=type))+
   geom_density()+
@@ -65,19 +77,22 @@ ggplot(df, aes(x=average_price, fill=type))+
   labs(title = "Avocado Price by type")+
   scale_fill_brewer(palette = "Set2")
 ```
+
 ### Create a matrix to demonstrate the volume of conventional and organic avocadoes
 ```{r}
+library(dplyr)
 vol_type <- df %>% group_by(type) %>% summarise(average_volume = round(mean(total_volume),3),average_price = round(mean(average_price),3)) %>% mutate(volume_percent= round(prop.table(average_volume)*100,3))
 vol_type
 ```
-*As can be seen from the density plot and the table in avocadoes.*
-- there are two types of avocado: organic and conventional
-- organic avocado share a small percent (3.2%) of volume but has a high price (1.62)
-- conventional avocado share a large percent (96.8) of volume but has a relative low price (1.16)
+**As can be seen from the density plot and the table in avocadoes.** <br>
+- there are two types of avocado: organic and conventional  <br>
+- organic avocado share a small percent (3.2%) of volume but has a high price (1.62)  <br>
+- conventional avocado share a large percent (96.8) of volume but has a relative low price (1.16) <br>
 
 ### Avocado price with the Date
 
-```{r}
+```{r ggplot}
+library(ggplot2)
 ## Change the Date column from factor to the date format
 df$date <- as.Date(df$date, "%Y-%m-%d")
 

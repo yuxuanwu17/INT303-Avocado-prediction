@@ -11,7 +11,7 @@
           <value>
             <RMarkdownRenderProfile>
               <option name="knitRootDirectory" value="$PROJECT_DIR$" />
-              <option name="lastOutput" value="$PROJECT_DIR$/avocado_pred.html" />
+              <option name="lastOutput" value="$PROJECT_DIR$/avocado_pred.pdf" />
             </RMarkdownRenderProfile>
           </value>
         </entry>
