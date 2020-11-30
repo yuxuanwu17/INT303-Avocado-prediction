@@ -65,4 +65,51 @@ ggplot(df, aes(x=average_price, fill=type))+
   labs(title = "Avocado Price by type")+
   scale_fill_brewer(palette = "Set2")
 ```
+### Create a matrix to demonstrate the volume of conventional and organic avocadoes
+```{r}
+vol_type <- df %>% group_by(type) %>% summarise(average_volume = round(mean(total_volume),3),average_price = round(mean(average_price),3)) %>% mutate(volume_percent= round(prop.table(average_volume)*100,3))
+vol_type
+```
+*As can be seen from the density plot and the table in avocadoes.*
+- there are two types of avocado: organic and conventional
+- organic avocado share a small percent (3.2%) of volume but has a high price (1.62)
+- conventional avocado share a large percent (96.8) of volume but has a relative low price (1.16)
+
+### Avocado price with the Date
+
+```{r}
+## Change the Date column from factor to the date format
+df$date <- as.Date(df$date, "%Y-%m-%d")
+
+## Sort the dates and order the datesets in date
+df <- df[order(df$date),]
+
+## Make the plot
+df %>% select(date, average_price, type) %>%
+  ggplot(aes(x=date,y=average_price))+
+  geom_area(aes(color=type,fill=type),alpha=0.3,position=position_dodge(0.8))+
+  theme_minimal()+
+  scale_color_manual(values = c("#ED7921","#62BE51"))+
+  scale_fill_manual(values = c("#FD833E","#B8FC5F")
+)
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
