@@ -109,12 +109,83 @@ df <- df[order(df$date),]
 df %>% select(date, average_price, type) %>%
   ggplot(aes(x=date,y=average_price))+
   geom_area(aes(color=type,fill=type),alpha=0.3,position=position_dodge(0.8))+
-  theme_minimal()+
+  theme_bw()+
   scale_color_manual(values = c("#ED7921","#62BE51"))+
   scale_fill_manual(values = c("#FD833E","#B8FC5F")
 )
 
 ```
+```{r}
+ggplot(data=df, aes(x=date, y=average_price,col=type))+
+  geom_line()+
+  facet_wrap(~ type)+
+  theme_bw()+
+  theme(legend.position = "position")
+```
+### Relationship between Prices and Total on either conventional or organic avocados
+
+#### Filter the data into two categories, conventional or organic
+
+```{r}
+organic <- df %>% select(type,average_price,total_volume,date) %>% filter(type=="organic")
+#head(organic)
+conventional <- df %>% select(type,average_price,total_volume,date) %>% filter(type=="conventional")
+#head(conventional)
+```
+
+```{r}
+library(tibbletime)
+organic <- as_tbl_time(organic,index = date) %>% as_period('1 month')
+conventional <- as_tbl_time(conventional,index = date) %>% as_period('monthly')
+
+```
+
+```{r}
+head(conventional)
+#head()
+```
+#### Monthly avocados price in either conventional or organic avocados
+```{r}
+options(repr.plot.width=8, repr.plot.height=6)
+
+## average-price with time series
+conventional_monthly <- conventional %>%
+    ggplot(aes(x=date,y=average_price))+
+    geom_line(color="#5C374C")+
+    theme_economist()+
+    theme(plot.title = element_text(hjust = 0.5),plot.background = element_rect(fill = "#D5D8DC"))+
+    labs(title = "Conventional Avocados")+
+    geom_hline(yintercept = max(conventional$average_price),linetype="dashed",color = "red")+
+    geom_hline(yintercept = min(conventional$average_price),linetype="dashed",color = "blue")
+
+organic_monthly <- organic %>%
+    ggplot(aes(x=date,y=average_price))+
+    geom_line(color="#58D68D")+
+    theme_economist()+
+    theme(plot.title = element_text(hjust = 0.5),plot.background = element_rect(fill = "#D5D8DC"))+
+    labs(title = "Organic Avocados")+
+    geom_hline(yintercept = max(organic$average_price),linetype="dashed",color = "red")+
+    geom_hline(yintercept = min(organic$average_price),linetype="dashed",color = "blue")
+
+## create a volume chart
+conventional_volume <- conventional %>%
+    ggplot(aes(x=date,y=total_volume))+
+    geom_bar(stat = 'identity',fill="#7FB3D5",color="black")+
+    theme_economist()+
+    theme(plot.title = element_text(hjust = 0.5),plot.background = element_rect(fill = "#D5D8DC"))+
+    geom_smooth(method = "loess",color="red")
+
+organic_volume <- organic %>%
+    ggplot(aes(x=date,y=total_volume))+
+    geom_bar(stat = 'identity',fill='#58D68D',color="black")+
+    theme_economist()+
+    theme(plot.title = element_text(hjust = 0.5),plot.background = element_rect(fill = "#D5D8DC"))+
+    geom_smooth(method = "loess",color ="red")
+
+plot_grid(conventional_monthly,organic_monthly,conventional_volume,organic_volume,nrow = 2,ncol = 2)
+
+```
+
 
 
 
