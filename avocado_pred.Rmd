@@ -44,6 +44,12 @@ library(reshape2)
 df <- read.csv("/Users/yuxuan/Desktop/INT301-Avocado-prediction/avocado-updated-2020.csv")
 head(df)
 ```
+### Check whether the dataset contains the missing value
+```{r}
+sum(is.na(df))
+```
+The overall dataset do not contain any missing value
+
 ### Explore the data and some clarification
 
 #### Explain the features
@@ -112,8 +118,9 @@ df %>% select(date, average_price, type) %>%
 
 
 
+```{r}
 
-
+```
 
 
 
