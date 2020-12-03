@@ -2,7 +2,7 @@
 title: "INT303 Final project"
 author: "Yuxuan Wu 1716309"
 date: "December 1, 2020"
-output: pdf_document
+output: html_document
 ---
 
 ```{r setup, include=FALSE}
@@ -123,6 +123,7 @@ ggplot(data=df, aes(x=date, y=average_price,col=type))+
   theme_bw()+
   theme(legend.position = "position")
 ```
+
 ### Relationship between Prices and Total on either conventional or organic avocados
 
 #### Filter the data into two categories, conventional or organic
@@ -192,6 +193,7 @@ plot_grid(conventional_monthly,organic_monthly,conventional_volume,organic_volum
 
 ```{r}
 ## Process the data into year and month format
+library(forecast)
 seasonal_df <- read.csv("/Users/yuxuan/Desktop/INT301-Avocado-prediction/avocado-updated-2020.csv")
 seasonal_df$month_year <- format(as.Date(seasonal_df$date),"%Y-%m")
 seasonal_df$month <- format(as.Date(seasonal_df$date),"%m")
@@ -204,6 +206,8 @@ seasonal_df$monthabb <- factor(seasonal_df$monthabb)
 ## Set the figure size
 options(repr.plot.width=10,repr.plot.height=8)
 
+## Analyze the price by month
+
 conv_price <- seasonal_df %>% select(type,year,monthabb,average_price) %>% filter(type=="conventional") %>% group_by(year,monthabb) %>% summarise(avg=mean(average_price))
 
 org_price <- seasonal_df %>% select(type,year,monthabb,average_price) %>% filter(type=="organic") %>% group_by(year,monthabb) %>% summarise(avg=mean(average_price))
@@ -211,14 +215,39 @@ org_price <- seasonal_df %>% select(type,year,monthabb,average_price) %>% filter
 conv_price <- ts(conv_price$avg,start = 2015,frequency = 12)
 org_price <- ts(org_price$avg,start = 2015,frequency = 12)
 
-byyearplot <- ggseasonplot(conv_price,year.labels = TRUE,year.labels.left = TRUE)+
+## Analyze the volume by month
+conv_volume <- seasonal_df %>% select(type,year,monthabb,total_volume) %>% filter(type=="conventional") %>% group_by(year,monthabb) %>% summarise(avg=mean(total_volume))
+
+org_volume <- seasonal_df %>% select(type,year,monthabb,total_volume) %>% filter(type=="organic") %>% group_by(year,monthabb) %>% summarise(avg=mean(total_volume))
+
+conv_volume <- ts(conv_volume$avg,start = 2015,frequency = 12)
+org_volume <- ts(org_volume$avg,start = 2015,frequency = 12)
+
+byyearplot_price_conv <- ggseasonplot(conv_price,year.labels = TRUE,year.labels.left = TRUE)+
 theme_economist()+
 theme(plot.title = element_text(hjust = 0.5),plot.background = element_rect(fill="#D5D8DC"))+
-labs(title = "Average conventional Avocados price by year for each month", y="Average Price")+
-#scale_fill_manual(values = c("#DA4511", "#FFBD00", "#6A953F", "#9A6233", "#D3AE7C", "#307CA1"))
+labs(title = "Average conventional Avocados price \n by year for each month", y="Average Price")+
 scale_fill_manual(values = c("#922B21", "#EE865D", "#DDCD5E", "#59BEC4", "#048B9F", "#114676"))
 
-byyearplot
+byyearplot_price_org <- ggseasonplot(org_price,year.labels = TRUE,year.labels.left = TRUE)+
+theme_economist()+
+theme(plot.title = element_text(hjust = 0.5),plot.background = element_rect(fill="#D5D8DC"))+
+labs(title = "Average organic Avocados price \n by year for each month", y="Average Price")+
+scale_fill_manual(values = c("#922B21", "#EE865D", "#DDCD5E", "#59BEC4", "#048B9F", "#114676"))
+
+byyearplot_volume_conv <- ggseasonplot(conv_volume,year.labels = TRUE,year.labels.left = TRUE)+
+theme_economist()+
+theme(plot.title = element_text(hjust = 0.5),plot.background = element_rect(fill="#D5D8DC"))+
+labs(title = "Average conventional Avocados volume \n by year for each month", y="Average volume")+
+scale_fill_manual(values = c("#922B21", "#EE865D", "#DDCD5E", "#59BEC4", "#048B9F", "#114676"))
+
+byyearplot_volume_org <- ggseasonplot(org_volume,year.labels = TRUE,year.labels.left = TRUE)+
+theme_economist()+
+theme(plot.title = element_text(hjust = 0.5),plot.background = element_rect(fill="#D5D8DC"))+
+labs(title = "Average organic Avocados volume by year \n for each month", y="Average volume")+
+scale_fill_manual(values = c("#922B21", "#EE865D", "#DDCD5E", "#59BEC4", "#048B9F", "#114676"))
+
+plot_grid(byyearplot_price_conv,byyearplot_price_org,byyearplot_volume_conv,byyearplot_volume_org,nrow = 2,ncol = 2)
 ```
 
 ### Seasonal patterns analysis
