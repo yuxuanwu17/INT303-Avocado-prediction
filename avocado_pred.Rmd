@@ -133,19 +133,20 @@ conventional <- df %>% select(type,average_price,total_volume,date) %>% filter(t
 #head(conventional)
 ```
 
-```{r}
+```{r tribble_tabel}
 library(tibbletime)
 organic <- as_tbl_time(organic,index = date) %>% as_period('1 month')
 conventional <- as_tbl_time(conventional,index = date) %>% as_period('monthly')
 
 ```
 
-```{r}
-head(conventional)
-#head()
-```
 #### Monthly avocados price in either conventional or organic avocados
-```{r}
+```{r cowplot}
+
+library(ggplot2)
+library(ggthemes)
+library(cowplot)
+
 options(repr.plot.width=8, repr.plot.height=6)
 
 ## average-price with time series
@@ -185,8 +186,50 @@ organic_volume <- organic %>%
 plot_grid(conventional_monthly,organic_monthly,conventional_volume,organic_volume,nrow = 2,ncol = 2)
 
 ```
+### Seasonal patterns analysis
+```{r}
+## Process the data into year and month format
+seasonal_df <- read.csv("/Users/yuxuan/Desktop/INT301-Avocado-prediction/avocado-updated-2020.csv")
+seasonal_df$month_year <- format(as.Date(seasonal_df$date),"%Y-%m")
+seasonal_df$month <- format(as.Date(seasonal_df$date),"%m")
 
+## Change the month from a Date format into a numerical foramt, then convert to the three letter format
+seasonal_df$monthabb <- sapply(seasonal_df$month, function (x) month.abb[as.numeric(x)])
+seasonal_df$monthabb <- factor(seasonal_df$monthabb,levels=month.abb)
+seasonal_df$monthabb <- factor(seasonal_df$monthabb)
 
+ggplot(seasonal_df,aes(x=average_price,fill=as.factor(year)))+
+geom_density(alpha=0.5)+
+theme_economist()+
+facet_wrap(~year)+
+theme(plot.title = element_text(hjust = 0.5),plot.background = element_rect(fill="#D5D8DC"))+
+guides(fill=FALSE)+
+labs(title = "Distribution of Prices by year",x='Average Price',y='Density')+
+scale_fill_manual(values = c("#DA4511", "#FFBD00", "#6A953F", "#9A6233", "#D3AE7C", "#307CA1"))
+
+```
+
+### Seasonality patterns
+```{r}
+conv_patterns <- seasonal_df %>% select(monthabb,average_price,type) %>% filter(type=="conventional") %>% group_by(monthabb) %>% summarise(avg=mean(average_price)) %>%
+  ggplot(aes(x=monthabb, y=avg))+
+  geom_point(color="#F35D5D",aes(size=avg))+
+  geom_line(group=0)+
+  theme_economist()+
+  theme(legend.position = "none",plot.title = element_text(hjust = 0.5),plot.background = element_rect(fill="#D5D8DC"))+
+  labs(title = "Conventional Avocados",x="Month",y="Average Price")
+
+organic_patterns <- seasonal_df %>% select(monthabb,average_price,type) %>% filter(type=="organic") %>% group_by(monthabb) %>% summarise(avg=mean(average_price)) %>%
+ggplot(aes(x=monthabb,y=avg))+
+  geom_point(color="#F35D5D",aes(size=avg))+
+  geom_line(group=0)+
+  theme_economist()+
+  theme(legend.position = "none",plot.title = element_text(hjust = 0.5),plot.background = element_rect(fill="#D5D8DC"))+
+  labs(title = "Organic Avocados",x="Month",y="Average Price")
+
+plot_grid(conv_patterns,organic_patterns,nrow = 2)
+#conv_patterns
+```
 
 
 ```{r}
