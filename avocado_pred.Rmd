@@ -39,6 +39,8 @@ library(gridExtra)
 library(lubridate)
 library(tibbletime)
 library(reshape2)
+library(prophet)
+
 ```
 ### Load the data and return the head of data
 ```{r}
@@ -69,20 +71,21 @@ The overall dataset do not contain any missing value
 
 ### Exploratory Data Analysis
 
-#### Density plot of the difference between two avocadoes.
+#### Density plot of the difference between two avocados.
 ```{r}
 levels(df$type)
 ```
 ```{r}
 library(ggplot2)
 options(repr.plot.width = 8, repr.plot.height = 4)
-ggplot(df, aes(x=average_price, fill=type))+
+density_plot <- ggplot(df, aes(x=average_price, fill=type))+
   geom_density()+
   facet_wrap(~type)+
   theme_minimal()+
   theme(plot.title = element_text(hjust = 0.5),legend.position = "bottom")+
   labs(title = "Avocado Price by type")+
   scale_fill_brewer(palette = "Set2")
+density_plot
 ```
 
 ### Create a matrix to demonstrate the volume of conventional and organic avocados
@@ -107,7 +110,7 @@ df$date <- as.Date(df$date, "%Y-%m-%d")
 df <- df[order(df$date),]
 
 ## Make the plot
-df %>% select(date, average_price, type) %>%
+comparision_plot <- df %>% select(date, average_price, type) %>%
   ggplot(aes(x=date,y=average_price))+
   geom_area(aes(color=type,fill=type),alpha=0.3,position=position_dodge(0.8))+
   theme_bw()+
@@ -115,7 +118,11 @@ df %>% select(date, average_price, type) %>%
   scale_fill_manual(values = c("#FD833E","#B8FC5F")
 )
 
+comparision_plot
+#plot_grid(density_plot,comparision,ncol = 2)
+
 ```
+
 ```{r}
 ggplot(data=df, aes(x=date, y=average_price,col=type))+
   geom_line()+
@@ -247,7 +254,7 @@ theme(plot.title = element_text(hjust = 0.5),plot.background = element_rect(fill
 labs(title = "Average organic Avocados volume by year \n for each month", y="Average volume")+
 scale_fill_manual(values = c("#922B21", "#EE865D", "#DDCD5E", "#59BEC4", "#048B9F", "#114676"))
 
-plot_grid(byyearplot_price_conv,byyearplot_price_org,byyearplot_volume_conv,byyearplot_volume_org,nrow = 2,ncol = 2)
+plot_grid(byyearplot_price_conv,byyearplot_price_org,byyearplot_volume_conv,byyearplot_volume_org,nrow = 2,ncol = 2,labels = c("A","B","C","D"))
 ```
 
 ### Seasonal patterns analysis
@@ -309,7 +316,7 @@ ifelse(seasonal_df$month %in% c("09","10","11"),"Autumn","Winter")))
 ## Prepare to analyze the results
 seasonality_plot_conventional_price <- seasonal_df %>% select(season,year,average_price,type) %>% filter(type =="conventional") %>% group_by(season,year) %>% summarise(avg=mean(average_price)) %>%
   ggplot(aes(x=season,y=avg,color=season))+
-  geom_segment(aes(x=season,xend=season,y=0,yend=avg),show.legend = FALSE)+
+  geom_segment(aes(x=season,xend=season,y=0,yend=avg))+
   coord_flip()+
   facet_wrap(~as.factor(year))+
   theme_minimal()+
@@ -319,7 +326,7 @@ seasonality_plot_conventional_price <- seasonal_df %>% select(season,year,averag
 
 seasonality_plot_conventional_volume <- seasonal_df %>% select(season,year,total_volume,type) %>% filter(type=="conventional") %>% group_by(season,year) %>% summarise(avg=round(mean(total_volume/1000000),2)) %>%
   ggplot(aes(x=season,y=avg,color=season))+
-  geom_segment(aes(x=season,xend=season,y=0,yend=avg))+
+  geom_segment(aes(x=season,xend=season,y=0,yend=avg),show.legend = FALSE)+
   coord_flip()+
   facet_wrap(~as.factor(year))+
   theme_minimal()+
@@ -352,8 +359,33 @@ seasonality_plot_organic_volume <- seasonal_df %>% select(season,year,total_volu
 plot_grid(seasonality_plot_organic_price,seasonality_plot_conventional_price,seasonality_plot_organic_volume,seasonality_plot_conventional_volume,nrow = 2,ncol = 2,labels = c("A","B","C","D"))
 
 ```
-levels(df$geography)
+
+
+### The future price prediction
 ```{r}
+
+## Select and filter the data and fit the model
+price_predict <- df %>% select(date,average_price) %>% group_by(date) %>% summarise(avg=mean(average_price))
+colnames(price_predict) <- c('ds','y')
+model <- prophet(price_predict,daily.seasonality = TRUE)
+
+## make prediction or forecast the results
+future <- make_future_dataframe(model,periods = 365)
+forecast <- predict(model,future)
+plot(model,forecast)+
+theme_minimal()+
+  theme(plot.title = element_text(hjust = 0.5),plot.background = element_rect(fill="#F4F6F7"))+
+  labs(title = "Avocados price prediction in next year",x="year",y="Average Price")
+
+trend <- prophet_plot_components(model,forecast)
+
+year_trend <- trend[1]
+month_trend <- trend[3]
+week_trend <- trend[2]
+
+overall_trend <- c(year_trend,month_trend,week_trend)
+ggarrange(plotlist = overall_trend, labels = c('A', 'B','C'), nrow = 3)
+
 ```
 
 
