@@ -152,7 +152,7 @@ conventional <- as_tbl_time(conventional,index = date) %>% as_period('monthly')
 ```
 
 #### Monthly avocados price in either conventional or organic avocados
-```{r cowplot}
+```{r cowplot, fig.width = 10, fig.height = 8, fig.align = "center"}
 
 library(ggplot2)
 library(ggthemes)
@@ -200,7 +200,7 @@ plot_grid(conventional_monthly,organic_monthly,conventional_volume,organic_volum
 ```
 ### Patterns among the years in each month (Autoplot library)
 
-```{r}
+```{r fig.height = 8, fig.width = 10, fig.align = "center"}
 ## Process the data into year and month format
 library(forecast)
 seasonal_df <- read.csv("/Users/yuxuan/Desktop/INT301-Avocado-prediction/avocado-updated-2020.csv")
@@ -275,7 +275,7 @@ scale_fill_manual(values = c("#DA4511", "#FFBD00", "#6A953F", "#9A6233", "#D3AE7
 ### Seasonality patterns
 
 #### Monthly analysis
-```{r seaonal patterns}
+```{r seaonal patterns, fig.align = "center", fig.width = 8, fig.height = 10}
 
 options(repr.plot.width=10,repr.plot.height=8)
 conv_patterns <- seasonal_df %>% select(monthabb,average_price,type) %>% filter(type=="conventional") %>% group_by(monthabb) %>% summarise(avg=mean(average_price)) %>%
@@ -307,7 +307,7 @@ plot_grid(conv_patterns,organic_patterns,whole_patterns,nrow = 3)
 #conv_patterns
 ```
 #### Seasonal patterns
-```{r}
+```{r fig.height = 8, fig.width = 10, fig.align = "center" }
 options(repr.plot.width=10,repr.plot.height=8)
 
 ## seperate the month into four seasons
@@ -361,8 +361,10 @@ seasonality_plot_organic_volume <- seasonal_df %>% select(season,year,total_volu
 plot_grid(seasonality_plot_organic_price,seasonality_plot_conventional_price,seasonality_plot_organic_volume,seasonality_plot_conventional_volume,nrow = 2,ncol = 2,labels = c("A","B","C","D"))
 
 ```
+
 ### Find the city where avocado's price is lowest
 ```{r}
+library(forcats)
 geo_conv_price <- seasonal_df %>% select(geography,average_price,type) %>% filter(type=="conventional") %>% group_by(geography)%>%  summarise(avg=round(mean(average_price),2)) %>% arrange(avg) %>% slice(1:6)  %>% mutate(geography=fct_reorder(geography,desc(avg))) %>%
   ggplot(aes(x=geography,y=avg))+
   geom_bar(stat = "identity",position = "dodge",alpha=.6,width =.4,show.legend = FALSE)+
@@ -389,7 +391,12 @@ plot_grid(geo_conv_price,geo_org_price,nrow = 2)
 
 ### The future price prediction
 ```{r}
-
+library(prophet)
+library(cowplot)
+library(gridExtra)
+library(ggplot2)
+library(ggpubr)
+library(devtools)
 ## Select and filter the data and fit the model
 price_predict <- df %>% select(date,average_price) %>% group_by(date) %>% summarise(avg=mean(average_price))
 colnames(price_predict) <- c('ds','y')
