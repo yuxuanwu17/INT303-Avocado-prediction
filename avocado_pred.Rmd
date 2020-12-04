@@ -415,9 +415,10 @@ trend <- prophet_plot_components(model,forecast)
 year_trend <- trend[1]
 month_trend <- trend[3]
 week_trend <- trend[2]
+time_trend <- trend[4]
 
-overall_trend <- c(year_trend,month_trend,week_trend)
-ggarrange(plotlist = overall_trend, labels = c('A', 'B','C'), nrow = 3)
+overall_trend <- c(year_trend,month_trend,week_trend,time_trend)
+ggarrange(plotlist = overall_trend, labels = c('A', 'B','C','D'))
 
 ```
 
