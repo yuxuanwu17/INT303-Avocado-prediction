@@ -93,6 +93,8 @@ density_plot
 library(dplyr)
 vol_type <- df %>% group_by(type) %>% summarise(average_volume = round(mean(total_volume),3),average_price = round(mean(average_price),3)) %>% mutate(volume_percent= round(prop.table(average_volume)*100,3))
 vol_type
+
+#cor(df$average_price,df$total_volume)
 ```
 **As can be seen from the density plot and the table in avocados.** <br>
 - there are two types of avocado: organic and conventional  <br>
@@ -359,6 +361,30 @@ seasonality_plot_organic_volume <- seasonal_df %>% select(season,year,total_volu
 plot_grid(seasonality_plot_organic_price,seasonality_plot_conventional_price,seasonality_plot_organic_volume,seasonality_plot_conventional_volume,nrow = 2,ncol = 2,labels = c("A","B","C","D"))
 
 ```
+### Find the city where avocado's price is lowest
+```{r}
+geo_conv_price <- seasonal_df %>% select(geography,average_price,type) %>% filter(type=="conventional") %>% group_by(geography)%>%  summarise(avg=round(mean(average_price),2)) %>% arrange(avg) %>% slice(1:6)  %>% mutate(geography=fct_reorder(geography,desc(avg))) %>%
+  ggplot(aes(x=geography,y=avg))+
+  geom_bar(stat = "identity",position = "dodge",alpha=.6,width =.4,show.legend = FALSE)+
+  coord_flip()+
+  geom_text(aes(label=avg),vjust=1.5,color='black',size=5)+
+  theme_minimal()+
+  theme(title = element_text(hjust = 0.6),plot.background = element_rect(fill="#F4F6F7"))+
+  labs(title = "Conventional Avocados average price by geography",x="Geography place",y="Average Price")
+
+geo_org_price <- seasonal_df %>% select(geography,average_price,type) %>% filter(type=="organic") %>% group_by(geography)%>%  summarise(avg=round(mean(average_price),2)) %>% arrange(avg) %>% slice(1:6) %>% mutate(geography=fct_reorder(geography,desc(avg))) %>%
+  ggplot(aes(x=geography,y=avg))+
+  geom_bar(stat = "identity",position = "dodge",alpha=.6,width =.4,show.legend = FALSE)+
+  coord_flip()+
+  geom_text(aes(label=avg),vjust=1.5,color='black',size=5)+
+  theme_minimal()+
+  theme(title = element_text(hjust = 0.6),plot.background = element_rect(fill="#F4F6F7"))+
+  labs(title = "Organic Avocados average price by geography",x="Geography place",y="Average Price")
+
+plot_grid(geo_conv_price,geo_org_price,nrow = 2)
+
+```
+
 
 
 ### The future price prediction
