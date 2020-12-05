@@ -234,25 +234,25 @@ org_volume <- ts(org_volume$avg,start = 2015,frequency = 12)
 
 byyearplot_price_conv <- ggseasonplot(conv_price,year.labels = TRUE,year.labels.left = TRUE)+
 theme_economist()+
-theme(plot.title = element_text(hjust = 0.5))+
+theme(plot.title = element_text(hjust = 0.5),plot.background = element_rect(fill="#D5D8DC"))+
 labs(title = "Average conventional Avocados price \n by year for each month", y="Average Price")+
 scale_fill_manual(values = c("#922B21", "#EE865D", "#DDCD5E", "#59BEC4", "#048B9F", "#114676"))
 
 byyearplot_price_org <- ggseasonplot(org_price,year.labels = TRUE,year.labels.left = TRUE)+
 theme_economist()+
-theme(plot.title = element_text(hjust = 0.5))+
+theme(plot.title = element_text(hjust = 0.5),plot.background = element_rect(fill="#D5D8DC"))+
 labs(title = "Average organic Avocados price \n by year for each month", y="Average Price")+
 scale_fill_manual(values = c("#922B21", "#EE865D", "#DDCD5E", "#59BEC4", "#048B9F", "#114676"))
 
 byyearplot_volume_conv <- ggseasonplot(conv_volume,year.labels = TRUE,year.labels.left = TRUE)+
 theme_economist()+
-theme(plot.title = element_text(hjust = 0.5))+
+theme(plot.title = element_text(hjust = 0.5),plot.background = element_rect(fill="#D5D8DC"))+
 labs(title = "Average conventional Avocados volume \n by year for each month", y="Average volume")+
 scale_fill_manual(values = c("#922B21", "#EE865D", "#DDCD5E", "#59BEC4", "#048B9F", "#114676"))
 
 byyearplot_volume_org <- ggseasonplot(org_volume,year.labels = TRUE,year.labels.left = TRUE)+
 theme_economist()+
-theme(plot.title = element_text(hjust = 0.5))+
+theme(plot.title = element_text(hjust = 0.5),plot.background = element_rect(fill="#D5D8DC"))+
 labs(title = "Average organic Avocados volume by year \n for each month", y="Average volume")+
 scale_fill_manual(values = c("#922B21", "#EE865D", "#DDCD5E", "#59BEC4", "#048B9F", "#114676"))
 
