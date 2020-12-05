@@ -194,7 +194,7 @@ organic_volume <- organic %>%
     theme(plot.title = element_text(hjust = 0.5),plot.background = element_rect(fill = "#D5D8DC"))+
     geom_smooth(method = "loess",color ="red")
 
-plot_grid(conventional_monthly,organic_monthly,conventional_volume,organic_volume,nrow = 2,ncol = 2)
+plot_grid(conventional_monthly,organic_monthly,conventional_volume,organic_volume,nrow = 2,ncol = 2,labels = c("A","B","C","D"))
 
 #plot_grid(conventional_monthly,conventional_volume,nrow = 2)
 ```
@@ -234,25 +234,25 @@ org_volume <- ts(org_volume$avg,start = 2015,frequency = 12)
 
 byyearplot_price_conv <- ggseasonplot(conv_price,year.labels = TRUE,year.labels.left = TRUE)+
 theme_economist()+
-theme(plot.title = element_text(hjust = 0.5),plot.background = element_rect(fill="#D5D8DC"))+
+theme(plot.title = element_text(hjust = 0.5))+
 labs(title = "Average conventional Avocados price \n by year for each month", y="Average Price")+
 scale_fill_manual(values = c("#922B21", "#EE865D", "#DDCD5E", "#59BEC4", "#048B9F", "#114676"))
 
 byyearplot_price_org <- ggseasonplot(org_price,year.labels = TRUE,year.labels.left = TRUE)+
 theme_economist()+
-theme(plot.title = element_text(hjust = 0.5),plot.background = element_rect(fill="#D5D8DC"))+
+theme(plot.title = element_text(hjust = 0.5))+
 labs(title = "Average organic Avocados price \n by year for each month", y="Average Price")+
 scale_fill_manual(values = c("#922B21", "#EE865D", "#DDCD5E", "#59BEC4", "#048B9F", "#114676"))
 
 byyearplot_volume_conv <- ggseasonplot(conv_volume,year.labels = TRUE,year.labels.left = TRUE)+
 theme_economist()+
-theme(plot.title = element_text(hjust = 0.5),plot.background = element_rect(fill="#D5D8DC"))+
+theme(plot.title = element_text(hjust = 0.5))+
 labs(title = "Average conventional Avocados volume \n by year for each month", y="Average volume")+
 scale_fill_manual(values = c("#922B21", "#EE865D", "#DDCD5E", "#59BEC4", "#048B9F", "#114676"))
 
 byyearplot_volume_org <- ggseasonplot(org_volume,year.labels = TRUE,year.labels.left = TRUE)+
 theme_economist()+
-theme(plot.title = element_text(hjust = 0.5),plot.background = element_rect(fill="#D5D8DC"))+
+theme(plot.title = element_text(hjust = 0.5))+
 labs(title = "Average organic Avocados volume by year \n for each month", y="Average volume")+
 scale_fill_manual(values = c("#922B21", "#EE865D", "#DDCD5E", "#59BEC4", "#048B9F", "#114676"))
 
@@ -306,6 +306,37 @@ whole_patterns <- seasonal_df %>% select(monthabb,average_price,type) %>% group_
 plot_grid(conv_patterns,organic_patterns,whole_patterns,nrow = 3)
 #conv_patterns
 ```
+
+```{r}
+conv_patterns_vol <- seasonal_df %>% select(monthabb,total_volume,type) %>% filter(type=="conventional") %>% group_by(monthabb) %>% summarise(avg=mean(total_volume)) %>%
+  ggplot(aes(x=monthabb, y=avg))+
+  geom_point(color="#F35D5D",aes(size=avg))+
+  geom_line(group=0)+
+  theme_economist()+
+  theme(legend.position = "none",plot.title = element_text(hjust = 0.5),plot.background = element_rect(fill="#D5D8DC"))+
+  labs(title = "Conventional Avocados volume",x="Month",y="Average Price")
+
+organic_patterns_vol <- seasonal_df %>% select(monthabb,total_volume,type) %>% filter(type=="organic") %>% group_by(monthabb) %>% summarise(avg=mean(total_volume)) %>%
+ggplot(aes(x=monthabb,y=avg))+
+  geom_point(color="#F35D5D",aes(size=avg))+
+  geom_line(group=0)+
+  theme_economist()+
+  theme(legend.position = "none",plot.title = element_text(hjust = 0.5),plot.background = element_rect(fill="#D5D8DC"))+
+  labs(title = "Organic Avocados volume",x="Month",y="Average Price")
+
+whole_patterns_vol <- seasonal_df %>% select(monthabb,total_volume,type) %>% group_by(monthabb) %>% summarise(avg=mean(total_volume)) %>%
+  ggplot(aes(x=monthabb,y=avg))+
+  geom_point(color="#F35D5D",aes(size=avg))+
+  geom_line(group=0)+
+  theme_economist()+
+  theme(legend.position = "none",plot.title = element_text(hjust = 0.5),plot.background = element_rect(fill="#D5D8DC"))+
+  labs(title = "All Avocados volume",x="Month",y="Average Price")
+
+
+plot_grid(conv_patterns_vol,organic_patterns_vol,whole_patterns_vol,nrow = 3)
+
+```
+
 #### Seasonal patterns
 ```{r fig.height = 8, fig.width = 10, fig.align = "center" }
 options(repr.plot.width=10,repr.plot.height=8)
@@ -318,7 +349,7 @@ ifelse(seasonal_df$month %in% c("09","10","11"),"Autumn","Winter")))
 ## Prepare to analyze the results
 seasonality_plot_conventional_price <- seasonal_df %>% select(season,year,average_price,type) %>% filter(type =="conventional") %>% group_by(season,year) %>% summarise(avg=mean(average_price)) %>%
   ggplot(aes(x=season,y=avg,color=season))+
-  geom_segment(aes(x=season,xend=season,y=0,yend=avg))+
+  geom_segment(aes(x=season,xend=season,y=0,yend=avg),show.legend = FALSE)+
   coord_flip()+
   facet_wrap(~as.factor(year))+
   theme_minimal()+
@@ -358,7 +389,7 @@ seasonality_plot_organic_volume <- seasonal_df %>% select(season,year,total_volu
   labs(title = "Organic Avocados total volume by Season",x="",y="Average volume")+
   geom_text(aes(x=season,y=0.01,label=paste0(avg," m")),hjust=-0.5,vjust=-0.5,size=4,color="black",fontface='italic',angle=360)
 
-plot_grid(seasonality_plot_organic_price,seasonality_plot_conventional_price,seasonality_plot_organic_volume,seasonality_plot_conventional_volume,nrow = 2,ncol = 2,labels = c("A","B","C","D"))
+plot_grid(seasonality_plot_conventional_price,seasonality_plot_organic_price,seasonality_plot_conventional_volume,seasonality_plot_organic_volume,nrow = 2,ncol = 2,labels = c("A","B","C","D"))
 
 ```
 
