@@ -46,6 +46,7 @@ library(prophet)
 ```{r}
 df <- read.csv("/Users/yuxuan/Desktop/INT301-Avocado-prediction/avocado-updated-2020.csv")
 head(df)
+#colnames(df)
 ```
 ### Check whether the dataset contains the missing value
 ```{r}
@@ -94,12 +95,28 @@ library(dplyr)
 vol_type <- df %>% group_by(type) %>% summarise(average_volume = round(mean(total_volume),3),average_price = round(mean(average_price),3)) %>% mutate(volume_percent= round(prop.table(average_volume)*100,3))
 vol_type
 
+#plu_conv <- df %>% select(type,total_volume,X4046,X4225,X4770) %>% group_by(type) %>% summarise(average_volume = round(mean(total_volume),3),x4046 = sum(X4046),x4225 = sum(X4225),x4770 = sum(X4770)) %>% mutate(volume_percent= round(prop.table(average_volume)*100,3))
+#plu_conv
+
 #cor(df$average_price,df$total_volume)
 ```
 **As can be seen from the density plot and the table in avocados.** <br>
 - there are two types of avocado: organic and conventional  <br>
 - organic avocado share a small percent (3.2%) of volume but has a high price (1.62)  <br>
 - conventional avocado share a large percent (96.8) of volume but has a relative low price (1.16) <br>
+
+### Compare the volume of each avocado
+```{r}
+x4770 <- df$X4770 %>% sum()
+x4046 <- df$X4046 %>% sum()
+x4225 <- df$X4225 %>% sum()
+total_types <- x4770+x4046+x4225
+total_types
+df$total_volume %>% sum()
+
+```
+
+The reason causing this difference is that there are different kinds of avocados, this dataset only consider the plu code of Hass avocados, it is obvious that it will cause the difference
 
 ### Avocado price with the Date
 
