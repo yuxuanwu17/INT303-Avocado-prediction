@@ -44,7 +44,7 @@ library(prophet)
 ```
 ### Load the data and return the head of data
 ```{r}
-df <- read.csv("/Users/yuxuan/Desktop/INT301-Avocado-prediction/avocado-updated-2020.csv")
+df <- read.csv("/Users/yuxuan/Desktop/INT303-Avocado-prediction/avocado-updated-2020.csv")
 head(df)
 #colnames(df)
 ```
@@ -215,12 +215,23 @@ plot_grid(conventional_monthly,organic_monthly,conventional_volume,organic_volum
 
 #plot_grid(conventional_monthly,conventional_volume,nrow = 2)
 ```
+
+- In order to find the seasonal patterns, I used the average price and volume in each month to conduct data analysis
+- Figure A,B stands for the average price in each month (monthly)
+- Blue dashed line stands for the minimum value while the red dashed value stands for the max value
+- The most expensive conventional avocados in one month could 1.8 \$, the cheapest month of conventional avocados can be 0.82 \$
+- The most expensive organic avocados in one month could 2.1 \$, the cheapest month of conventional avocados can be 1.21 \$
+- Figure C,D stands for the volume in each month, the red line stands for the trend
+- The love of American people are consistent, the sold volume continues to grow (conventional avocado)
+- Regarding with the organic avocados, in 2019-2020, possibly owing to the decline of economic situation and the covid 19 pandemic after 2020
+- The volume patterns could follow some seasonal patterns and need further analysis
+
 ### Patterns among the years in each month (Autoplot library)
 
 ```{r fig.height = 8, fig.width = 10, fig.align = "center"}
 ## Process the data into year and month format
 library(forecast)
-seasonal_df <- read.csv("/Users/yuxuan/Desktop/INT301-Avocado-prediction/avocado-updated-2020.csv")
+seasonal_df <- read.csv("/Users/yuxuan/Desktop/INT303-Avocado-prediction/avocado-updated-2020.csv")
 seasonal_df$month_year <- format(as.Date(seasonal_df$date),"%Y-%m")
 seasonal_df$month <- format(as.Date(seasonal_df$date),"%m")
 
@@ -354,6 +365,16 @@ plot_grid(conv_patterns_vol,organic_patterns_vol,whole_patterns_vol,nrow = 3)
 
 ```
 
+- Overall, the avocado price could reach the peak of the year during Sep and Oct, and Feb could be the lowest price
+- Regarding with the volume avocado sold, American people like to buy avocado at Feb and May, but not at Nov
+- Based on the research, avocado tend to ripe at Aug and Sep, plus the time in transportation and packaging, it is unavoidable that it could have some delay
+- From the plot we could see that the trend in Aug are positive
+- We could see that the sold volume and price demonstrated some negative correlation at some time, which obeys our common sense, people like buying staffs when their price are low
+- Meanwhile, some positive correlation could be discovered between price and volumes, the hypothesis is that the newly harvest avocados are definitely in high quality and the previous stored avocados could be consumed significantly, which means there is a gap between demand and output
+- The volumes are increasing with the time which possibly because of the widely broadcasting.
+
+
+
 #### Seasonal patterns
 ```{r fig.height = 8, fig.width = 10, fig.align = "center" }
 options(repr.plot.width=10,repr.plot.height=8)
@@ -410,6 +431,14 @@ plot_grid(seasonality_plot_conventional_price,seasonality_plot_organic_price,sea
 
 ```
 
+- Spring (3-5), Summer (6-8), Autumn (9-11), Winter (12-2)
+- Figure A, B stands for the average price of avocados for either conventional or organic
+- Figure C, D stands for the volume sold for either conventional or organic, the unit is million (m)
+- In summary:
+  - it is relative cheaper to avocado in Spring or Winter
+  - avocado most sold in Spring and Summer since it is close to the next round of ripen in avocado and the market are in great supply of avocados
+
+
 ### Find the city where avocado's price is lowest
 ```{r}
 library(forcats)
@@ -435,6 +464,9 @@ plot_grid(geo_conv_price,geo_org_price,nrow = 2)
 
 ```
 
+- Use the calculation to return the six cities or regions whether the average price for avocados is lowest
+- Based on the research from map, Top 5 is close to the Mexico, where the avocado originated
+- These places are possibly the region to supply avocado
 
 
 ### The future price prediction
@@ -469,6 +501,28 @@ overall_trend <- c(year_trend,month_trend,week_trend,time_trend)
 ggarrange(plotlist = overall_trend, labels = c('A', 'B','C','D'))
 
 ```
+
+- Figure A is analyze based on year: Since 2015, the average price of avocados continues to grow and 2017 was a crazy year, they grow in a speed higher than 1.3; After 2018, the average price tend to be stable, but still has a rate about 1.28; Regarding to the future prediction, the range is about [1.20-1.34]. But considering the pandemic in North America, the possible rate could be 1.20
+- Figure B is the analysis based on month: we could see that during May, the price tend to grow in a positive way and this trend continues to grow to Oct; After Oct, the price starts to decrease, which follows the previous analysis
+- Figure C is the analysis based on week. The average price follow the rule that ordinary family shopping habits, they prefer to buy things during weekends, so the price during weekends could be higher in other days
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
