@@ -46,7 +46,7 @@ library(prophet)
 ```{r}
 df <- read.csv("/Users/yuxuan/Desktop/INT303-Avocado-prediction/avocado-updated-2020.csv")
 head(df)
-#colnames(df)
+colnames(df)
 ```
 ### Check whether the dataset contains the missing value
 ```{r}
