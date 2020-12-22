@@ -300,6 +300,18 @@ scale_fill_manual(values = c("#DA4511", "#FFBD00", "#6A953F", "#9A6233", "#D3AE7
 
 ```
 
+```{r}
+library(ggplot2)
+ggplot(seasonal_df,aes(x=total_volume,fill=as.factor(year)))+
+geom_density(alpha=0.5)+
+theme_economist()+
+facet_wrap(~year)+
+theme(plot.title = element_text(hjust = 0.5),plot.background = element_rect(fill="#D5D8DC"))+
+guides(fill=FALSE)+
+labs(title = "Distribution of Prices by year",x='Average Price',y='Density')+
+scale_fill_manual(values = c("#DA4511", "#FFBD00", "#6A953F", "#9A6233", "#D3AE7C", "#307CA1"))
+```
+
 ### Seasonality patterns
 
 #### Monthly analysis
